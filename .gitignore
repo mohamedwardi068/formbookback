@@ -1,0 +1,19 @@
+# Dependency directories
+node_modules/
+
+# Environment files
+.env
+./config/connect.js
+
+# Build outputs
+dist/
+build/
+
+# Logs and databases
+*.log
+*.sql
+*.db
+
+# OS generated files
+.DS_Store
+Thumbs.db
