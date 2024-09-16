@@ -2,16 +2,16 @@ const mongoose = require("mongoose");
 
 const bookSchema = new mongoose.Schema({
   price: { type: Number },
-  originalPrice: { type: Number, default: null },   // Added original price
-  discount: { type: Number, default: null },        // Added discount percentage
-  sold: { type: Number, default: 0 },               // Added sold count
-  totalStock: { type: Number, default: null },      // Added total stock
-  rating: { type: Number, default: null },          // Added rating
-  reviewsCount: { type: Number, default: null },    // Added reviews count
-  isTopRated: { type: Boolean, default: false },    // Added isTopRated
-  isBestSeller: { type: Boolean, default: false },  // Added isBestSeller
-  isPreOrder: { type: Boolean, default: false },    // Added isPreOrder
-  isNnew: { type: Boolean, default: false },         // Added isNew
+  originalPrice: { type: Number, default: null },   
+  discount: { type: Number, default: null },        
+  sold: { type: Number, default: 0 },              
+  totalStock: { type: Number, default: null },      
+  rating: { type: Number, default: null },          
+  reviewsCount: { type: Number, default: null },    
+  isTopRated: { type: Boolean, default: false },   
+  isBestSeller: { type: Boolean, default: false },  
+  isPreOrder: { type: Boolean, default: false },    
+  isNnew: { type: Boolean, default: false },         
 
   creationDate: { type: Date, default: Date.now },
   ageRestriction: { type: Number },

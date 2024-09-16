@@ -10,25 +10,32 @@ const generateToken = (id) => {
   return jwt.sign({ id }, JWT_SECRET, { expiresIn: '1h' });
 };
 
-
 const signup = async (req, res) => {
   try {
-    const { name, email, phonenumber, password } = req.body;
+    const { firstName, lastName, email, phonenumber, password, address } = req.body;
 
-
+    // Check if email already exists
     const existingClient = await Client.findOne({ email });
     if (existingClient) {
       return res.status(400).json({ message: 'Email already in use' });
     }
 
-
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create new client with the updated schema fields
+    const newClient = new Client({
+      firstName,
+      lastName,
+      email,
+      phonenumber,
+      password: hashedPassword,
+      address // This can be optional
+    });
 
-    const newClient = new Client({ name, email, phonenumber, password: hashedPassword });
     await newClient.save();
 
-
+    // Generate JWT token
     const token = generateToken(newClient._id);
 
     res.status(201).json({ token, client: newClient });
@@ -37,21 +44,23 @@ const signup = async (req, res) => {
   }
 };
 
-
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Check if client exists
     const client = await Client.findOne({ email });
     if (!client) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
+    // Compare provided password with stored hashed password
     const isMatch = await bcrypt.compare(password, client.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
+    // Generate JWT token
     const token = generateToken(client._id);
 
     res.status(200).json({ token, client });
@@ -64,11 +73,13 @@ const updatePassword = async (req, res) => {
   try {
     const { email, oldPassword, newPassword } = req.body;
 
+    // Find client by email
     const client = await Client.findOne({ email });
     if (!client) {
       return res.status(400).json({ message: 'Client not found' });
     }
 
+    // Compare old password
     const isMatch = await bcrypt.compare(oldPassword, client.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Old password is incorrect' });
