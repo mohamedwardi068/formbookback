@@ -1,15 +1,13 @@
 const mongoose = require("mongoose");
 
-const categorySchema = new mongoose.Schema({
-    name: { type: String , required: true},
-    image: { type: String , required: true},
-    language: { type: String , required: true},
-
-    numberOfBooks: { type: Number, required: true },
-    gender: { type: String , required: true},
-    books: [{ type: mongoose.Schema.Types.ObjectId, ref: "bookSchema" }],
-
-  
+const CategSchema = new mongoose.Schema({
+ name: { type: String , required: true },
+ image: { type:String },
+ language: { type: String},
+ numberOfBooks: { type: Number },
+ gender: { type: String, required: true },
+ books: [{ type: mongoose.Schema.Types.ObjectId, ref: "book"  }],
+ 
 });
 
-module.exports = mongoose.model("categorySchema", categorySchema);
+module.exports = mongoose.model("Category", CategSchema);

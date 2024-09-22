@@ -13,6 +13,8 @@ const clientSchema = new mongoose.Schema({
     state: { type: String },
     postalCode: { type: String }
   },
+  avatar: { type: String},
+
   
   commandIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Command" }] 
 });
