@@ -10,9 +10,15 @@ const generateToken = (id) => {
   return jwt.sign({ id }, JWT_SECRET, { expiresIn: '1h' });
 };
 
+// Signup function
 const signup = async (req, res) => {
   try {
-    const { firstName, lastName, email, phonenumber, password, address } = req.body;
+    const { firstName, lastName, email, password, street, city, state, postalCode, avatar,phoneNumber } = req.body;
+
+    // Input validation
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
 
     // Check if email already exists
     const existingClient = await Client.findOne({ email });
@@ -23,14 +29,18 @@ const signup = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new client with the updated schema fields
+    // Create new client
     const newClient = new Client({
       firstName,
       lastName,
-      email,
-      phonenumber,
+      email, 
       password: hashedPassword,
-      address // This can be optional
+      street,
+      city,
+      state,
+      postalCode,
+      avatar,
+      phoneNumber
     });
 
     await newClient.save();
@@ -40,13 +50,20 @@ const signup = async (req, res) => {
 
     res.status(201).json({ token, client: newClient });
   } catch (error) {
+    console.error('Signup error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
+// Login function
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Input validation
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
 
     // Check if client exists
     const client = await Client.findOne({ email });
@@ -65,13 +82,20 @@ const login = async (req, res) => {
 
     res.status(200).json({ token, client });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
+// Update password function
 const updatePassword = async (req, res) => {
   try {
     const { email, oldPassword, newPassword } = req.body;
+
+    // Input validation
+    if (!email || !oldPassword || !newPassword) {
+      return res.status(400).json({ message: 'Email, old password, and new password are required' });
+    }
 
     // Find client by email
     const client = await Client.findOne({ email });
@@ -94,6 +118,7 @@ const updatePassword = async (req, res) => {
 
     res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {
+    console.error('Update password error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

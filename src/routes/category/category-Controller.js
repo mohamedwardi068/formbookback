@@ -4,10 +4,7 @@ const Category = require("../../models/category");
 exports.getCategories = async (req, res) => {
   try {
     const categories = await Category.find();
-    console.log("first",categories)
     res.status(200).send(categories);
-    
-    // res.status(200).json(categories);
   } catch (error) {
     res.status(500).json({ error:er });
   }
