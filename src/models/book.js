@@ -22,7 +22,7 @@ const bookSchema = new mongoose.Schema({
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "categorySchema",
-    // required: true,
+  
   },
   commandIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Command" }],
   createdAt: { type: Date, default: Date.now }, 
