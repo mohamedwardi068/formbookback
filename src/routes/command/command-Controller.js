@@ -1,74 +1,58 @@
-const Category = require("../../models/category");
+const commandSchema = require("../../models/command");
 
-// Command Handlers
-const getCategories = async () => {
-  return await Category.find();
-};
 
-const addCategory = async (data) => {
-  if (!data || !data.name || !data.language) {
-    throw new Error("Category name and language are required");
-  }
 
-  const newCategory = new Category({
-    name: data.name,
-    image: data.image,
-    language: data.language,
-    numberOfBooks: data.numberOfBooks,
-    gender: data.gender,
-    books: data.books || []
-  });
-
-  return await newCategory.save();
-};
-
-const updateCategory = async (id, data) => {
-  if (!id || !data) {
-    throw new Error("Category ID and data are required");
-  }
-
-  const updatedCategory = await Category.findByIdAndUpdate(id, data, { new: true });
-  if (!updatedCategory) {
-    throw new Error("Category not found");
-  }
-
-  return updatedCategory;
-};
-
-const removeCategory = async (id) => {
-  if (!id) {
-    throw new Error("Category ID is required");
-  }
-
-  const deletedCategory = await Category.findByIdAndDelete(id);
-  if (!deletedCategory) {
-    throw new Error("Category not found");
-  }
-
-  return deletedCategory;
-};
-
-// Crowd: Command Registry
-const commandCrowd = {
-  getCategories: getCategories,
-  addCategory: addCategory,
-  updateCategory: updateCategory,
-  removeCategory: removeCategory
-};
-
-// Command Dispatcher
-exports.handleCommand = async (req, res) => {
-  const { command, data, id } = req.body;
-
+exports.passcommand = async (req, res) => {
   try {
-    if (!commandCrowd[command]) {
-      return res.status(400).json({ message: "Invalid command" });
-    }
+    const data = req.body; // Use req.body to access the data being sent in the request
+    console.log("Received Data:", data);
 
-    const result = await commandCrowd[command](id, data); // Pass id and data as required by handlers
-    return res.status(200).json(result);
+    // Create a new command object with the provided data
+    const newCommand = new commandSchema({
+      clientid: data.clientid, // Reference to the client
+      totalprice: data.totalprice, // Total price of the command
+      adress: data.adress, // Address
+      numtel: data.numtel, // Phone number
+      books: data.books || [], // Array of book IDs
+      status: data.status // Command status (e.g., Pending, Confirmed, etc.)
+    });
+
+    // Save the new command to the database
+    await newCommand.save();
+
+    // Respond with the created command
+    res.status(201).json(newCommand);
   } catch (error) {
-    console.error("Error handling command:", error);
-    return res.status(500).json({ error: error.message });
+    console.error("Error creating command:", error);
+    res.status(500).json({ message: "Error creating command", error });
   }
 };
+
+
+exports.updatecommand = async (id, data) => {
+  if (!id || !data) {
+    throw new Error("command ID and data are required");
+  }
+  const updatedcommand = await commandSchema.findByIdAndUpdate(id, data, { new: true });
+  if (!updatedcommand) {
+    throw new Error("command not found");
+  }
+  return updatedcommand;
+};
+
+exports. removecommand = async (id) => {
+  if (!id) {
+    throw new Error("command ID is required");
+  }
+
+  const deletedcommand = await commandSchema.findByIdAndDelete(id);
+  if (!deletedcommand) {
+    throw new Error("command not found");
+  }
+
+  return deletedcommand;
+};
+
+
+
+
